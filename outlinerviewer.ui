@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OutLinerViewer</class>
+ <widget class="QMainWindow" name="OutLinerViewer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>932</width>
+    <height>666</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Outliner</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icones/icones/Tree.png</normaloff>:/icones/icones/Tree.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>10</number>
+      </property>
+      <widget class="noteTreeWidget" name="TOC">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>TOC</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QFontComboBox" name="fontBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="sizeBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="ColorBox" name="colorbox" native="true"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="noteTextEdit" name="textEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>932</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_FIle">
+    <property name="title">
+     <string>&amp;FIle</string>
+    </property>
+    <addaction name="action_New"/>
+    <addaction name="action_Open"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="action_Copy"/>
+    <addaction name="actionCu_t"/>
+    <addaction name="action_Paste"/>
+    <addaction name="separator"/>
+    <addaction name="action_Bold"/>
+    <addaction name="action_Italic"/>
+    <addaction name="action_Underline"/>
+    <addaction name="separator"/>
+    <addaction name="actionLeft"/>
+    <addaction name="actionCenter"/>
+    <addaction name="actionRight"/>
+    <addaction name="actionFill"/>
+    <addaction name="separator"/>
+    <addaction name="actionAddItem"/>
+    <addaction name="actionRemoveItem"/>
+    <addaction name="actionAddChild"/>
+   </widget>
+   <widget class="QMenu" name="menuTa_ble">
+    <property name="title">
+     <string>Ta&amp;ble</string>
+    </property>
+    <addaction name="actionInsert_Table"/>
+    <addaction name="actionInsert_Row"/>
+    <addaction name="actionInsert_Column"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelete_Table"/>
+    <addaction name="actionDelete_Row"/>
+    <addaction name="actionDelete_Column"/>
+   </widget>
+   <addaction name="menu_FIle"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menuTa_ble"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="fileToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_New"/>
+   <addaction name="action_Open"/>
+   <addaction name="action_Save"/>
+   <addaction name="separator"/>
+   <addaction name="action_Quit"/>
+  </widget>
+  <widget class="QToolBar" name="editToolBar">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Copy"/>
+   <addaction name="action_Paste"/>
+   <addaction name="actionCu_t"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+  </widget>
+  <widget class="QToolBar" name="styleToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Bold"/>
+   <addaction name="action_Underline"/>
+   <addaction name="action_Italic"/>
+   <addaction name="separator"/>
+   <addaction name="actionLeft"/>
+   <addaction name="actionCenter"/>
+   <addaction name="actionRight"/>
+   <addaction name="actionFill"/>
+   <addaction name="separator"/>
+   <addaction name="actionInsertLink"/>
+  </widget>
+  <widget class="QToolBar" name="tableToolBar">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionInsert_Table"/>
+   <addaction name="actionInsert_Row"/>
+   <addaction name="actionInsert_Column"/>
+   <addaction name="actionDelete_Table"/>
+   <addaction name="actionDelete_Row"/>
+   <addaction name="actionDelete_Column"/>
+  </widget>
+  <widget class="QToolBar" name="treeToolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAddItem"/>
+   <addaction name="actionRemoveItem"/>
+  </widget>
+  <action name="action_New">
+   <property name="icon">
+    <iconset theme="document-new">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset theme="document-save">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="icon">
+    <iconset theme="document-save-as">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;As ...</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_Copy">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-copy">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Paste">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-paste">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionCu_t">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-cut">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>Cu&amp;t</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Bold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-text-bold">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Bold</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Italic">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-text-italic">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Italic</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Underline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-text-underline">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Underline</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-undo">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset theme="edit-redo">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionUnindent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-indent-less">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Unindent</string>
+   </property>
+  </action>
+  <action name="actionIndent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-indent-more">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>indent</string>
+   </property>
+  </action>
+  <action name="actionAddItem">
+   <property name="icon">
+    <iconset theme="list-add">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>ItemAdd</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionRemoveItem">
+   <property name="icon">
+    <iconset theme="list-remove">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>itemRemove</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionAddChild">
+   <property name="text">
+    <string>AddChild</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Return</string>
+   </property>
+   <property name="enable" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionInsertLink">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="insert-link">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>insertLink</string>
+   </property>
+  </action>
+  <action name="actionInsert_Table">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/Table.png</normaloff>:/icones/icones/Table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert Table</string>
+   </property>
+  </action>
+  <action name="actionInsert_Row">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/table_row_insert.png</normaloff>:/icones/icones/table_row_insert.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert Row</string>
+   </property>
+  </action>
+  <action name="actionInsert_Column">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/table-insert-column.png</normaloff>:/icones/icones/table-insert-column.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert Column</string>
+   </property>
+  </action>
+  <action name="actionDelete_Table">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/table_delete.png</normaloff>:/icones/icones/table_delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Table</string>
+   </property>
+  </action>
+  <action name="actionDelete_Row">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/table_row_delete.png</normaloff>:/icones/icones/table_row_delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Row</string>
+   </property>
+  </action>
+  <action name="actionDelete_Column">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/delete-column.png</normaloff>:/icones/icones/delete-column.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Column</string>
+   </property>
+  </action>
+  <action name="actionRight">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-justify-right"/>
+   </property>
+   <property name="text">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="actionLeft">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-justify-left"/>
+   </property>
+   <property name="text">
+    <string>Leftt</string>
+   </property>
+  </action>
+  <action name="actionCenter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-justify-center"/>
+   </property>
+   <property name="text">
+    <string>Center</string>
+   </property>
+  </action>
+  <action name="actionFill">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-justify-fill"/>
+   </property>
+   <property name="text">
+    <string>Fill</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>noteTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>notetreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>noteTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>notetextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ColorBox</class>
+   <extends>QWidget</extends>
+   <header>colorbox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>triggered()</signal>
+   <receiver>OutLinerViewer</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>332</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

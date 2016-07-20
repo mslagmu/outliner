@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/icones">
+        <file>icones/table_row_insert.png</file>
+        <file>icones/table_delete.png</file>
+        <file>icones/table_row_delete.png</file>
+        <file>icones/table-insert-column.png</file>
+        <file>icones/Table.png</file>
+        <file>icones/delete-column.png</file>
+        <file>icones/Tree.png</file>
+        <file>icones/folders.png</file>
+    </qresource>
+    <qresource prefix="/translations">
+        <file>outliner_fr_FR.qm</file>
+    </qresource>
+</RCC>
