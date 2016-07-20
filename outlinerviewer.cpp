@@ -15,74 +15,74 @@
 
 OutLinerViewer::OutLinerViewer(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::OutLinerViewer),config("outliner") {
-  ui->setupUi(this);
-  ui->textEdit->ui=ui;
-  ui->TOC->ui=ui;
+    ui->setupUi(this);
+    ui->textEdit->ui=ui;
+    ui->TOC->ui=ui;
 
-  ui->sizeBox->setItemDelegate(new sizeDelegate());
-  ui->textEdit->setFontPointSize(9);
+    ui->sizeBox->setItemDelegate(new sizeDelegate());
+    ui->textEdit->setFontPointSize(9);
 
-  for(int i=7;i<40;i++){
-      ui->sizeBox->addItem(QString("%1").arg(i),i);
-  }
-
-
-  QActionGroup *alignGroup = new QActionGroup(this);
-  connect(alignGroup, &QActionGroup::triggered, this, &OutLinerViewer::textAlign);
-
-  if (QApplication::isLeftToRight()) {
-      alignGroup->addAction(ui->actionLeft);
-      alignGroup->addAction(ui->actionCenter);
-      alignGroup->addAction(ui->actionRight);
-  } else {
-      alignGroup->addAction(ui->actionRight);
-      alignGroup->addAction(ui->actionCenter);
-      alignGroup->addAction(ui->actionLeft);
-  }
-  alignGroup->addAction(ui->actionFill);
+    for(int i=7;i<40;i++){
+        ui->sizeBox->addItem(QString("%1").arg(i),i);
+    }
 
 
-  filename=config.value("filename","toto.txt").toString();
-  setGeometry(config.value("geometry",QRect(341,123,974,628)).toRect());
-  ui->splitter->restoreState(config.value("splitterSizes").toByteArray());
+    QActionGroup *alignGroup = new QActionGroup(this);
+    connect(alignGroup, &QActionGroup::triggered, this, &OutLinerViewer::textAlign);
 
-  ui->fontBox->setParent(ui->styleToolBar);
-  ui->styleToolBar->addWidget(ui->fontBox);
-  ui->sizeBox->setParent(ui->styleToolBar);
-  ui->styleToolBar->addWidget(ui->sizeBox);
-  ui->colorbox->setParent(ui->styleToolBar);
-  ui->styleToolBar->addWidget(ui->colorbox);
+    if (QApplication::isLeftToRight()) {
+        alignGroup->addAction(ui->actionLeft);
+        alignGroup->addAction(ui->actionCenter);
+        alignGroup->addAction(ui->actionRight);
+    } else {
+        alignGroup->addAction(ui->actionRight);
+        alignGroup->addAction(ui->actionCenter);
+        alignGroup->addAction(ui->actionLeft);
+    }
+    alignGroup->addAction(ui->actionFill);
 
 
-  openFile();
+    filename=config.value("filename","toto.txt").toString();
+    setGeometry(config.value("geometry",QRect(341,123,974,628)).toRect());
+    ui->splitter->restoreState(config.value("splitterSizes").toByteArray());
+
+    ui->fontBox->setParent(ui->styleToolBar);
+    ui->styleToolBar->addWidget(ui->fontBox);
+    ui->sizeBox->setParent(ui->styleToolBar);
+    ui->styleToolBar->addWidget(ui->sizeBox);
+    ui->colorbox->setParent(ui->styleToolBar);
+    ui->styleToolBar->addWidget(ui->colorbox);
+
+
+    openFile();
 }
 
 OutLinerViewer::~OutLinerViewer() { delete ui; }
 
 void OutLinerViewer::on_actionAddItem_triggered() {
-  noteItem *current = ui->TOC->currentItem();
-  noteItem *n = new noteItem();
+    noteItem *current = ui->TOC->currentItem();
+    noteItem *n = new noteItem();
 
-  if (current == 0 || current->parent() == 0) {
-    ui->TOC->invisibleRootItem()->addChild(n);
-  } else {
-    current->parent()->addChild(n);
-    ui->TOC->setCurrentItem(n);
-    ui->TOC->editItem(n);
-  }
+    if (current == 0 || current->parent() == 0) {
+        ui->TOC->invisibleRootItem()->addChild(n);
+    } else {
+        current->parent()->addChild(n);
+        ui->TOC->setCurrentItem(n);
+        ui->TOC->editItem(n);
+    }
 }
 
 void OutLinerViewer::on_actionRemoveItem_triggered() {
-  noteItem *current = ui->TOC->currentItem();
-  if (current == 0)
-    return;
-  if (current->parent() == 0) {
-    ui->TOC->invisibleRootItem()->removeChild(current);
-  } else {
-    noteItem* parent = dynamic_cast<noteItem*>(current->parent());
-    parent->removeChild(current);
-    parent->manageIcon();
-  }
+    noteItem *current = ui->TOC->currentItem();
+    if (current == 0)
+        return;
+    if (current->parent() == 0) {
+        ui->TOC->invisibleRootItem()->removeChild(current);
+    } else {
+        noteItem* parent = dynamic_cast<noteItem*>(current->parent());
+        parent->removeChild(current);
+        parent->manageIcon();
+    }
 }
 
 
@@ -99,62 +99,62 @@ void OutLinerViewer::textAlign(QAction *a)
 }
 
 void OutLinerViewer::on_actionAddChild_triggered() {
-  noteItem *current = ui->TOC->currentItem();
-  noteItem *n = new noteItem();
-  if (current == 0) {
-    ui->TOC->invisibleRootItem()->addChild(n);
-  } else {
-    current->addChild(n);
-    current->manageIcon();
-  }
-  ui->TOC->setCurrentItem(n);
-  ui->TOC->editItem(n);
+    noteItem *current = ui->TOC->currentItem();
+    noteItem *n = new noteItem();
+    if (current == 0) {
+        ui->TOC->invisibleRootItem()->addChild(n);
+    } else {
+        current->addChild(n);
+        current->manageIcon();
+    }
+    ui->TOC->setCurrentItem(n);
+    ui->TOC->editItem(n);
 }
 
 void OutLinerViewer::on_actionInsertLink_triggered() {
-  qDebug() << "on_actionInsertLink_triggered";
+    qDebug() << "on_actionInsertLink_triggered";
 }
 void OutLinerViewer::on_actionIndent_triggered() {
-  qDebug() << "on_actionIndent_triggered";
+    qDebug() << "on_actionIndent_triggered";
 }
 void OutLinerViewer::on_actionUnindent_triggered() {
-  qDebug() << "on_actionUnindent_triggered";
+    qDebug() << "on_actionUnindent_triggered";
 }
 void OutLinerViewer::on_actionInsert_Table_triggered() {
     if ( cm==true) return;
     ui->textEdit->textCursor().insertTable(2,2);
 }
 void OutLinerViewer::on_actionInsert_Row_triggered() {
-  if ( cm==true) return;
-  QTextCursor cursor = ui->textEdit->textCursor();
-  QTextTable * t = cursor.currentTable();
-  if (t != 0) {
-     QTextTableCell c = t->cellAt(cursor);
-     int row = c.row();
-     t->insertRows(row+1,1);
-   }
+    if ( cm==true) return;
+    QTextCursor cursor = ui->textEdit->textCursor();
+    QTextTable * t = cursor.currentTable();
+    if (t != 0) {
+        QTextTableCell c = t->cellAt(cursor);
+        int row = c.row();
+        t->insertRows(row+1,1);
+    }
 }
 void OutLinerViewer::on_actionDelete_Table_triggered() {
-  qDebug() << "on_actionDelete_Table_triggered";
+    qDebug() << "on_actionDelete_Table_triggered";
 }
 void OutLinerViewer::on_actionDelete_Row_triggered() {
     if ( cm==true) return;
     QTextCursor cursor = ui->textEdit->textCursor();
     QTextTable * t = cursor.currentTable();
     if (t != 0) {
-       QTextTableCell c = t->cellAt(cursor);
-       int row = c.row();
-       t->removeRows(row,1);
-     }
+        QTextTableCell c = t->cellAt(cursor);
+        int row = c.row();
+        t->removeRows(row,1);
+    }
 }
 void OutLinerViewer::on_actionDelete_Column_triggered() {
     if ( cm==true) return;
     QTextCursor cursor = ui->textEdit->textCursor();
     QTextTable * t = cursor.currentTable();
     if (t != 0) {
-       QTextTableCell c = t->cellAt(cursor);
-       int column = c.column();
-       t->removeColumns(column,1);
+        QTextTableCell c = t->cellAt(cursor);
+        int column = c.column();
+        t->removeColumns(column,1);
     }
 }
 void OutLinerViewer::on_actionInsert_Column_triggered() {
@@ -162,10 +162,10 @@ void OutLinerViewer::on_actionInsert_Column_triggered() {
     QTextCursor cursor = ui->textEdit->textCursor();
     QTextTable * t = cursor.currentTable();
     if (t != 0) {
-       QTextTableCell c = t->cellAt(cursor);
-       int column = c.column();
-       t->insertColumns(column+1,1);
-     }
+        QTextTableCell c = t->cellAt(cursor);
+        int column = c.column();
+        t->insertColumns(column+1,1);
+    }
 }
 
 
@@ -215,9 +215,9 @@ void OutLinerViewer::openFile(){
     int nb;
     in >> nb;
     for (int i = 0; i <nb ;i++) {
-      noteItem *current = new noteItem();
-      in >> current;
-      ui->TOC->invisibleRootItem()->addChild(current);
+        noteItem *current = new noteItem();
+        in >> current;
+        ui->TOC->invisibleRootItem()->addChild(current);
     }
     file.close();
     ui->TOC->setCurrentItem(ui->TOC->invisibleRootItem()->child(0));
@@ -278,22 +278,22 @@ void OutLinerViewer::on_sizeBox_activated(const QString &p)
 
 void OutLinerViewer::on_TOC_currentItemChanged(QTreeWidgetItem *current,
                                                QTreeWidgetItem *previous) {
-  noteItem *p = dynamic_cast<noteItem*>(previous);
-  noteItem *c = dynamic_cast<noteItem*>(current);
-  if (p != 0) {
-    p->setHtml(ui->textEdit->toHtml());
-  }
-  if (c != 0) {
-      ui->textEdit->setHtml(c->html());
-  } else {
-      ui->textEdit->setHtml("");
-      ui->textEdit->setEnabled(false);
-  }
-  //if ((p != 0) && (c != 0))
+    noteItem *p = dynamic_cast<noteItem*>(previous);
+    noteItem *c = dynamic_cast<noteItem*>(current);
+    if (p != 0) {
+        p->setHtml(ui->textEdit->toHtml());
+    }
+    if (c != 0) {
+        ui->textEdit->setHtml(c->html());
+    } else {
+        ui->textEdit->setHtml("");
+        ui->textEdit->setEnabled(false);
+    }
+    //if ((p != 0) && (c != 0))
 }
 
 void OutLinerViewer::on_TOC_itemSelectionChanged() {
-  ui->textEdit->setEnabled(true);
+    ui->textEdit->setEnabled(true);
 }
 void OutLinerViewer::on_textEdit_currentCharFormatChanged(const QTextCharFormat &format) {
     QFont f = format.font();
