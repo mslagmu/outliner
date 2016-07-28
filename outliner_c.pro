@@ -18,14 +18,20 @@ SOURCES += main.cpp\
     notetextedit.cpp \
     noteitem.cpp \
     sizedelegate.cpp \
-    colorbox.cpp
+    colorbox.cpp \
+    aes.cpp \
+    AESStringCrypt.cpp \
+    sha256.cpp
 
 HEADERS  += outlinerviewer.h \
             notetreewidget.h \
     notetextedit.h \
     noteitem.h \
     sizedelegate.h \
-    colorbox.h
+    colorbox.h \
+    aes.h \
+    AESStringCrypt.h \
+    sha256.h
 
 FORMS    += outlinerviewer.ui
 

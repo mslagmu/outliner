@@ -8,13 +8,42 @@
 #include <QTextTableCell>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QInputDialog>
 #include "colorbox.h"
-
+#include "AESStringCrypt.h"
 
 #define MAGIC 2345432
 
+
+
+QByteArray encrypt(QString pwd,QByteArray & qb){
+    QByteArray  ciphertext;
+    ciphertext.resize(qb.size()+100);
+    unsigned long long ciphertext_length = AESStringCrypt( (unsigned char*) pwd.toLatin1().data(),
+                                                           (unsigned long)pwd.length(),
+                                                           (unsigned char*) qb.data(),
+                                                           (unsigned long long) qb.size(),
+                                                           (unsigned char*) ciphertext.data());
+
+    return QByteArray ((const char *)ciphertext,ciphertext_length);
+}
+
+QByteArray decrypt(QString pwd,QByteArray & qb){
+    QByteArray  cleartext;
+    cleartext.resize(qb.size());
+    unsigned long long cleartext_length = AESStringDecrypt( (unsigned char*) pwd.toLatin1().data(),
+                                                            (unsigned long)pwd.length(),
+                                                            (unsigned char*) qb.data(),
+                                                            (unsigned long long) qb.size(),
+                                                            (unsigned char*) cleartext.data());
+
+    return QByteArray ((const char *)cleartext,cleartext_length);
+}
+
+
+
 OutLinerViewer::OutLinerViewer(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::OutLinerViewer),config("outliner") {
+    : QMainWindow(parent), ui(new Ui::OutLinerViewer),config("outliner"),cryptLabel(this) {
     ui->setupUi(this);
     ui->textEdit->ui=ui;
     ui->TOC->ui=ui;
@@ -53,6 +82,7 @@ OutLinerViewer::OutLinerViewer(QWidget *parent)
     ui->colorbox->setParent(ui->styleToolBar);
     ui->styleToolBar->addWidget(ui->colorbox);
 
+    ui->statusbar->insertPermanentWidget(0,&cryptLabel,50);
 
     openFile();
 }
@@ -184,17 +214,44 @@ void OutLinerViewer::on_colorbox_colorSelected(QColor color){
 void OutLinerViewer::on_action_Save_triggered() {
     noteItem *current = ui->TOC->currentItem();
     current->setHtml(ui->textEdit->toHtml());
-    QFile file(filename);
-    file.open(QIODevice::WriteOnly);
-    QDataStream out(&file);
+    QByteArray qa,qb;
+    QDataStream out(&qa,QIODevice::WriteOnly);
     out << (quint32)MAGIC;
     int nb = ui->TOC->invisibleRootItem()->childCount();
     out << nb;
     for (int i =0; i < nb;i++)
         out << (noteItem *) (ui->TOC->invisibleRootItem()->child(i));
+
+    if (password.size()==0) {
+        qb=qa;
+    } else {
+        qb=encrypt(password,qa);
+    }
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly);
+    file.write(qb);
     file.close();
 }
 
+void OutLinerViewer::on_actionPass_word_triggered(){
+    bool pwdok = false;
+    while  (!pwdok) {
+        bool ok;
+        QString p1 = QInputDialog::getText(this,tr("Choose Password"),tr("Enter a password:"),QLineEdit::Password,"",&ok);
+        if (!ok) return;
+        QString p2 = QInputDialog::getText(this,tr("Choose Password"),tr("Enter a password again:"),QLineEdit::Password,"",&ok);
+        if (!ok) return;
+
+        if (p1!=p2) {
+            QMessageBox::warning(this,tr("Error"),QString(tr("The password are diffrent.")));
+        } else {
+            pwdok = true;
+            setPassword(p1);
+        }
+
+    }
+
+}
 
 
 void OutLinerViewer::openFile(){
@@ -204,12 +261,24 @@ void OutLinerViewer::openFile(){
         QMessageBox::warning(this,tr("Error"),QString(tr("The file %1 doesn't exist.")).arg(filename));
         return;
     };
-    QDataStream in(&file);
+    QByteArray qa=file.readAll();
+    file.close();
+    QByteArray qb;
+    if ( qa.startsWith("AES") == true) {
+        bool ok;
+        setPassword(QInputDialog::getText(this,tr("Password required"),tr("Enter a password:"),QLineEdit::Password,"",&ok));
+        if (ok == false ) return;
+        qb=decrypt(password,qa);
+    } else {
+        qb=qa;
+    }
+    QDataStream in(qb);
     quint32 magic;
     in >> magic;
 
     if ( magic != MAGIC ) {
         QMessageBox::warning(this,tr("Error"),QString(tr("The file %1 has a bad format.")).arg(filename));
+        setPassword("");
         return;
     }
     int nb;
@@ -331,7 +400,19 @@ void OutLinerViewer::on_TOC_focus(){
 void OutLinerViewer::on_action_New_triggered(){
     ui->TOC->clear();
     ui->textEdit->setText("");
+    setPassword("");
 }
+
+
+void OutLinerViewer::setPassword(QString p){
+    password = p;
+    if ( p == "" ){
+        cryptLabel.setText(tr("Uncrypted"));
+    } else {
+        cryptLabel.setText(tr("Crypted"));
+    }
+}
+
 
 void OutLinerViewer::saveConfig(){
     config.setValue("filename",filename);

@@ -8,6 +8,7 @@
         <file>icones/delete-column.png</file>
         <file>icones/Tree.png</file>
         <file>icones/folders.png</file>
+        <file>icones/key.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file>outliner_fr_FR.qm</file>

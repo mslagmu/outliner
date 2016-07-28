@@ -111,6 +111,8 @@
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
+    <addaction name="actionPass_word"/>
+    <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
@@ -179,6 +181,7 @@
    <addaction name="action_New"/>
    <addaction name="action_Open"/>
    <addaction name="action_Save"/>
+   <addaction name="actionPass_word"/>
    <addaction name="separator"/>
    <addaction name="action_Quit"/>
   </widget>
@@ -589,7 +592,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="format-justify-right"/>
+    <iconset theme="format-justify-right">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Right</string>
@@ -600,7 +604,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="format-justify-left"/>
+    <iconset theme="format-justify-left">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Leftt</string>
@@ -611,7 +616,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="format-justify-center"/>
+    <iconset theme="format-justify-center">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Center</string>
@@ -622,10 +628,20 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="format-justify-fill"/>
+    <iconset theme="format-justify-fill">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Fill</string>
+   </property>
+  </action>
+  <action name="actionPass_word">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icones/icones/key.png</normaloff>:/icones/icones/key.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pass&amp;word</string>
    </property>
   </action>
  </widget>

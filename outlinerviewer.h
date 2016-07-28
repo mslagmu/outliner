@@ -5,6 +5,7 @@
 #include <QObject>
 #include<QTreeWidgetItem>
 #include<QSettings>
+#include<QLabel>
 #include<QTextCharFormat>
 
 namespace Ui {
@@ -53,6 +54,7 @@ public slots:
     void on_TOC_focus();
     void on_action_New_triggered();
     void on_colorbox_colorSelected(QColor color);
+    void on_actionPass_word_triggered();
     void textAlign(QAction *a);
 
 private:
@@ -60,6 +62,9 @@ private:
     int cm=false;
     QString filename="toto.txt";
     QSettings config;
+    QString password;
+    void setPassword(QString p);
+    QLabel  cryptLabel;
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
 
