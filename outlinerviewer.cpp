@@ -1,5 +1,5 @@
 #include "outlinerviewer.h"
-#include "noteitem.h"
+
 #include "ui_outlinerviewer.h"
 #include "sizedelegate.h"
 #include <QDebug>
@@ -84,6 +84,8 @@ OutLinerViewer::OutLinerViewer(QWidget *parent)
 
     ui->statusbar->insertPermanentWidget(0,&cryptLabel,50);
 
+    setPassword("");
+
     openFile();
 }
 
@@ -91,14 +93,10 @@ OutLinerViewer::~OutLinerViewer() { delete ui; }
 
 void OutLinerViewer::on_actionAddItem_triggered() {
     noteItem *current = ui->TOC->currentItem();
-    noteItem *n = new noteItem();
-
-    if (current == 0 || current->parent() == 0) {
-        ui->TOC->invisibleRootItem()->addChild(n);
+    if (current == 0) {
+        addChild(current);
     } else {
-        current->parent()->addChild(n);
-        ui->TOC->setCurrentItem(n);
-        ui->TOC->editItem(n);
+        addChild(current->parent());
     }
 }
 
@@ -128,9 +126,9 @@ void OutLinerViewer::textAlign(QAction *a)
         ui->textEdit->setAlignment(Qt::AlignJustify);
 }
 
-void OutLinerViewer::on_actionAddChild_triggered() {
-    noteItem *current = ui->TOC->currentItem();
+void OutLinerViewer::addChild(noteItem* current, QString text) {
     noteItem *n = new noteItem();
+    n->setText(0,text);
     if (current == 0) {
         ui->TOC->invisibleRootItem()->addChild(n);
     } else {
@@ -141,9 +139,32 @@ void OutLinerViewer::on_actionAddChild_triggered() {
     ui->TOC->editItem(n);
 }
 
-void OutLinerViewer::on_actionInsertLink_triggered() {
-    qDebug() << "on_actionInsertLink_triggered";
+void OutLinerViewer::on_actionAddChild_triggered() {
+    noteItem *current = ui->TOC->currentItem();
+    addChild(current);
 }
+
+void OutLinerViewer::on_actionInsertLink_triggered() {
+    QTextCursor cursor = ui->textEdit->textCursor();
+    QTextCharFormat fmt;
+    if ( !(cursor.hasSelection())) {
+       ui->actionInsertLink->setChecked(false);
+       return;
+    }
+
+    fmt.setAnchor(ui->actionInsertLink->isChecked());
+
+    if ( ui->actionInsertLink->isChecked() ){
+        QString t = ui->textEdit->textCursor().selectedText();
+        fmt.setAnchorHref(t);
+    } else {
+        fmt.setFontUnderline(false);
+    }
+    cursor.setCharFormat(fmt);
+    ui->textEdit->setHtml(ui->textEdit->toHtml());
+}
+
+
 void OutLinerViewer::on_actionIndent_triggered() {
     qDebug() << "on_actionIndent_triggered";
 }
@@ -211,8 +232,30 @@ void OutLinerViewer::on_colorbox_colorSelected(QColor color){
 }
 
 
+void OutLinerViewer::on_textEdit_anchorClicked(const QUrl &link){
+    QList<QTreeWidgetItem *> items = ui->TOC->findItems(link.path(),Qt::MatchExactly | Qt::MatchRecursive);
+    if ( items.size() == 0 ) {
+        newNodeDialog newnodedialog(this);
+        if (newnodedialog.exec() == QDialog::Accepted ) {
+            noteItem * c = ui->TOC->currentItem();
+            QString s(link.path());
+            switch (newnodedialog.typeOfNode()) {
+               case 0: addChild(c,s);break;
+               case 1: addChild(c->parent(),s);break;
+               case 2:;addChild((noteItem*)ui->TOC->invisibleRootItem(),s);break;
+
+            }
+        }
+
+    } else {
+        ui->TOC->setCurrentItem(items[0]);
+    }
+
+}
+
 void OutLinerViewer::on_action_Save_triggered() {
     noteItem *current = ui->TOC->currentItem();
+    if ( current == nullptr ) return;
     current->setHtml(ui->textEdit->toHtml());
     QByteArray qa,qb;
     QDataStream out(&qa,QIODevice::WriteOnly);
@@ -293,7 +336,7 @@ void OutLinerViewer::openFile(){
 }
 
 void OutLinerViewer::on_action_Open_triggered() {
-    QString f = QFileDialog::getOpenFileName(this,tr("Open a file"),"..");
+    QString f = QFileDialog::getOpenFileName(this,tr("Open a file"),"..",QString(),nullptr,QFileDialog::DontUseNativeDialog );
     if (f != "") {
         filename=f;
         openFile();
@@ -371,6 +414,7 @@ void OutLinerViewer::on_textEdit_currentCharFormatChanged(const QTextCharFormat 
     ui->action_Bold->setChecked(f.bold());
     ui->action_Italic->setChecked(f.italic());
     ui->action_Underline->setChecked(f.underline());
+    ui->actionInsertLink->setChecked(format.isAnchor());
 }
 
 
@@ -408,8 +452,10 @@ void OutLinerViewer::setPassword(QString p){
     password = p;
     if ( p == "" ){
         cryptLabel.setText(tr("Uncrypted"));
+        cryptLabel.setStyleSheet("color:red");
     } else {
         cryptLabel.setText(tr("Crypted"));
+        cryptLabel.setStyleSheet("color:green");
     }
 }
 

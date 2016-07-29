@@ -7,6 +7,8 @@
 #include<QSettings>
 #include<QLabel>
 #include<QTextCharFormat>
+#include"newnodedialog.h"
+#include "noteitem.h"
 
 namespace Ui {
 class OutLinerViewer;
@@ -56,6 +58,7 @@ public slots:
     void on_colorbox_colorSelected(QColor color);
     void on_actionPass_word_triggered();
     void textAlign(QAction *a);
+    void on_textEdit_anchorClicked(const QUrl &link);
 
 private:
     Ui::OutLinerViewer *ui;
@@ -65,6 +68,8 @@ private:
     QString password;
     void setPassword(QString p);
     QLabel  cryptLabel;
+
+    void addChild(noteItem* current, QString text="");
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
 

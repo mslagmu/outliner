@@ -1,8 +1,8 @@
 #include "notetextedit.h"
 #include "ui_outlinerviewer.h"
 
-noteTextEdit::noteTextEdit(QWidget *parent):QTextEdit(parent){
-
+noteTextEdit::noteTextEdit(QWidget *parent):QTextBrowser(parent){
+    setOpenLinks(false);
 }
 
 void noteTextEdit::focusInEvent(QFocusEvent * e){

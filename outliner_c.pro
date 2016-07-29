@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     colorbox.cpp \
     aes.cpp \
     AESStringCrypt.cpp \
-    sha256.cpp
+    sha256.cpp \
+    newnodedialog.cpp
 
 HEADERS  += outlinerviewer.h \
             notetreewidget.h \
@@ -31,9 +32,11 @@ HEADERS  += outlinerviewer.h \
     colorbox.h \
     aes.h \
     AESStringCrypt.h \
-    sha256.h
+    sha256.h \
+    newnodedialog.h
 
-FORMS    += outlinerviewer.ui
+FORMS    += outlinerviewer.ui \
+    newnodedialog.ui
 
 RESOURCES += \
     resources.qrc

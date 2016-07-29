@@ -1,12 +1,12 @@
 #ifndef NOTETEXTEDIT_H
 #define NOTETEXTEDIT_H
-#include<QTextEdit>
+#include<QTextBrowser>
 
 namespace Ui {
 class OutLinerViewer;
 }
 
-class noteTextEdit : public QTextEdit
+class noteTextEdit : public QTextBrowser
 {
     Q_OBJECT
 public:
