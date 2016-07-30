@@ -158,13 +158,13 @@ void OutLinerViewer::on_actionInsertLink_triggered() {
 
     QTextCharFormat fmt;
     if ( !(cursor.hasSelection())) {
-       ui->actionInsertLink->setChecked(false);
-       cursor.movePosition(QTextCursor::Left,QTextCursor::MoveAnchor);
-       cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor,2);
-       cursor.setCharFormat(fmt);
-       cursor.clearSelection();
-       ui->textEdit->setTextCursor(cursor);
-       return;
+        ui->actionInsertLink->setChecked(false);
+        cursor.movePosition(QTextCursor::Left,QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor,2);
+        cursor.setCharFormat(fmt);
+        cursor.clearSelection();
+        ui->textEdit->setTextCursor(cursor);
+        return;
     }
 
     fmt.setAnchor(ui->actionInsertLink->isChecked());
