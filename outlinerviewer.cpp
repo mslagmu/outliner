@@ -102,6 +102,7 @@ void OutLinerViewer::on_actionAddItem_triggered() {
 
 void OutLinerViewer::on_actionRemoveItem_triggered() {
     noteItem *current = ui->TOC->currentItem();
+
     if (current == 0)
         return;
     if (current->parent() == 0) {
@@ -110,6 +111,12 @@ void OutLinerViewer::on_actionRemoveItem_triggered() {
         noteItem* parent = dynamic_cast<noteItem*>(current->parent());
         parent->removeChild(current);
         parent->manageIcon();
+    }
+
+    int i;
+    while((i = history.indexOf(current)) != -1 ) {
+        history.removeAt(i);
+        if (historyIndex >=i) historyIndex--;
     }
 }
 
@@ -145,23 +152,36 @@ void OutLinerViewer::on_actionAddChild_triggered() {
 }
 
 void OutLinerViewer::on_actionInsertLink_triggered() {
-    QTextCursor cursor = ui->textEdit->textCursor();
+    QTextCursor  cursor = ui->textEdit->textCursor();
+    if ( !(cursor.hasSelection()))
+        cursor.select(QTextCursor::WordUnderCursor);
+
     QTextCharFormat fmt;
     if ( !(cursor.hasSelection())) {
        ui->actionInsertLink->setChecked(false);
+       cursor.movePosition(QTextCursor::Left,QTextCursor::MoveAnchor);
+       cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor,2);
+       cursor.setCharFormat(fmt);
+       cursor.clearSelection();
+       ui->textEdit->setTextCursor(cursor);
        return;
     }
 
     fmt.setAnchor(ui->actionInsertLink->isChecked());
 
     if ( ui->actionInsertLink->isChecked() ){
-        QString t = ui->textEdit->textCursor().selectedText();
+        QString t = cursor.selectedText();
         fmt.setAnchorHref(t);
     } else {
         fmt.setFontUnderline(false);
     }
     cursor.setCharFormat(fmt);
+    int pos = cursor.position();
     ui->textEdit->setHtml(ui->textEdit->toHtml());
+    cursor.setPosition(pos);
+    QTextCharFormat fmt2;
+    cursor.setCharFormat(fmt2);
+    ui->textEdit->setTextCursor(cursor);
 }
 
 
@@ -236,14 +256,14 @@ void OutLinerViewer::on_textEdit_anchorClicked(const QUrl &link){
     QList<QTreeWidgetItem *> items = ui->TOC->findItems(link.path(),Qt::MatchExactly | Qt::MatchRecursive);
     if ( items.size() == 0 ) {
         newNodeDialog newnodedialog(this);
+        newnodedialog.setLinkName(link.path());
         if (newnodedialog.exec() == QDialog::Accepted ) {
             noteItem * c = ui->TOC->currentItem();
             QString s(link.path());
             switch (newnodedialog.typeOfNode()) {
-               case 0: addChild(c,s);break;
-               case 1: addChild(c->parent(),s);break;
-               case 2:;addChild((noteItem*)ui->TOC->invisibleRootItem(),s);break;
-
+            case 0: addChild(c,s);break;
+            case 1: addChild(c->parent(),s);break;
+            case 2:;addChild((noteItem*)ui->TOC->invisibleRootItem(),s);break;
             }
         }
 
@@ -401,7 +421,20 @@ void OutLinerViewer::on_TOC_currentItemChanged(QTreeWidgetItem *current,
         ui->textEdit->setHtml("");
         ui->textEdit->setEnabled(false);
     }
-    //if ((p != 0) && (c != 0))
+
+    if (historyManage) {
+        historyManage=false;
+    } else {
+        if (historyIndex == history.size() -1 ) {
+            history.append(c);
+            historyIndex++;
+        } else {
+            int s = history.size() - historyIndex -1 ;
+            for(int i=0; i < s;i++) history.removeLast();
+            history.append(c);
+            historyIndex++;
+        }
+    }
 }
 
 void OutLinerViewer::on_TOC_itemSelectionChanged() {
@@ -409,6 +442,13 @@ void OutLinerViewer::on_TOC_itemSelectionChanged() {
 }
 void OutLinerViewer::on_textEdit_currentCharFormatChanged(const QTextCharFormat &format) {
     QFont f = format.font();
+    if (format.isAnchor()) {
+        ui->actionInsertLink->setChecked(format.isAnchor());
+        ui->action_Bold->setChecked(false);
+        ui->action_Italic->setChecked(false);
+        ui->action_Underline->setChecked(false);
+        return;
+    }
     ui->fontBox->setCurrentIndex(ui->fontBox->findText(QFontInfo(f).family()));
     ui->sizeBox->setCurrentIndex(ui->sizeBox->findText(QString::number(f.pointSize())));
     ui->action_Bold->setChecked(f.bold());
@@ -429,6 +469,17 @@ void OutLinerViewer::on_textEdit_cursorPositionChanged()
         ui->actionRight->setChecked(true);
     else if (a & Qt::AlignJustify)
         ui->actionFill->setChecked(true);
+
+    QTextCursor cursor=ui->textEdit->textCursor();
+    if ( (cursor.charFormat().isAnchor()) && !(cursor.hasSelection())){
+        int pos = cursor.position();
+        cursor.movePosition(QTextCursor::EndOfWord,QTextCursor::MoveAnchor);
+        if ( pos == cursor.position() ){
+            QTextCharFormat tfm;
+            cursor.setCharFormat(tfm);
+            ui->textEdit->setTextCursor(cursor);
+        }
+    }
 }
 
 void OutLinerViewer::on_textEdit_focus(){
@@ -457,6 +508,26 @@ void OutLinerViewer::setPassword(QString p){
         cryptLabel.setText(tr("Crypted"));
         cryptLabel.setStyleSheet("color:green");
     }
+}
+
+
+
+void OutLinerViewer::on_actionPrevious_triggered(){
+    historyManage=true;
+    if (historyIndex > 0 ) {
+        historyIndex--;
+        ui->TOC->setCurrentItem(history[historyIndex]);
+    }
+    historyManage=false;
+}
+
+void OutLinerViewer::on_actionNext_triggered(){
+    historyManage=true;
+    if (historyIndex < history.size() -1 ) {
+        historyIndex++;
+        ui->TOC->setCurrentItem(history[historyIndex]);
+    }
+    historyManage=false;
 }
 
 

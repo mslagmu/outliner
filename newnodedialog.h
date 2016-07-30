@@ -14,6 +14,7 @@ class newNodeDialog : public QDialog
 public:
     explicit newNodeDialog(QWidget *parent = 0);
     int typeOfNode();
+    void setLinkName(QString  name);
     ~newNodeDialog();
 
 private:

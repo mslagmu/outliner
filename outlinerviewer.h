@@ -46,6 +46,8 @@ public slots:
     void on_action_Italic_toggled(bool t);
     void on_action_Underline_toggled(bool t);
     void on_action_Bold_toggled(bool t);
+    void on_actionPrevious_triggered();
+    void on_actionNext_triggered();
     void on_fontBox_activated(const QString &f);
     void on_sizeBox_activated(const QString &f);
     void on_TOC_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
@@ -74,6 +76,9 @@ private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
 
     void openFile();
+    QList<noteItem*> history;
+    bool historyManage = false;
+    int historyIndex = -1;
 };
 
 #endif // OUTLINERVIEWER_H

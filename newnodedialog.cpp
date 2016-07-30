@@ -15,6 +15,12 @@ int newNodeDialog::typeOfNode(){
    if (ui->rootButton->isChecked()) return 2;
 }
 
+
+void newNodeDialog::setLinkName(QString  name){
+    ui->linkName->setText(name);
+}
+
+
 newNodeDialog::~newNodeDialog()
 {
     delete ui;
