@@ -186,15 +186,31 @@ void OutLinerViewer::on_actionInsertLink_triggered() {
 
 
 void OutLinerViewer::on_actionIndent_triggered() {
-    qDebug() << "on_actionIndent_triggered";
+    QTextCursor cursor = ui->textEdit->textCursor();
+    QTextBlockFormat bf = cursor.blockFormat();
+    bf.setIndent(bf.indent()+1);
+    cursor.setBlockFormat(bf);
 }
 void OutLinerViewer::on_actionUnindent_triggered() {
-    qDebug() << "on_actionUnindent_triggered";
+    QTextCursor cursor = ui->textEdit->textCursor();
+    QTextBlockFormat bf = cursor.blockFormat();
+    if (bf.indent() == 0) return;
+    bf.setIndent(bf.indent()-1);
+    cursor.setBlockFormat(bf);
 }
+
 void OutLinerViewer::on_actionInsert_Table_triggered() {
     if ( cm==true) return;
-    ui->textEdit->textCursor().insertTable(2,2);
+    QTextTable *table = ui->textEdit->textCursor().insertTable(2,2);
+    QTextTableFormat fmt =table->format();
+    QVector<QTextLength> l;
+    l.append(QTextLength(QTextLength::PercentageLength,50));
+    l.append(QTextLength(QTextLength::PercentageLength,50));
+    fmt.setColumnWidthConstraints(l);
+    fmt.setCellSpacing(0);
+    table->setFormat(fmt);
 }
+
 void OutLinerViewer::on_actionInsert_Row_triggered() {
     if ( cm==true) return;
     QTextCursor cursor = ui->textEdit->textCursor();
@@ -205,9 +221,17 @@ void OutLinerViewer::on_actionInsert_Row_triggered() {
         t->insertRows(row+1,1);
     }
 }
+
 void OutLinerViewer::on_actionDelete_Table_triggered() {
-    qDebug() << "on_actionDelete_Table_triggered";
+    if ( cm==true) return;
+    QTextCursor cursor = ui->textEdit->textCursor();
+    QTextTable * t = cursor.currentTable();
+    if ( t!=0 ){
+        int n = t->columns();
+        t->removeColumns(0,n);
+    }
 }
+
 void OutLinerViewer::on_actionDelete_Row_triggered() {
     if ( cm==true) return;
     QTextCursor cursor = ui->textEdit->textCursor();
@@ -480,6 +504,13 @@ void OutLinerViewer::on_textEdit_cursorPositionChanged()
             ui->textEdit->setTextCursor(cursor);
         }
     }
+    bool istable = (cursor.currentTable()!=0);
+    ui->actionDelete_Column->setEnabled(istable);
+    ui->actionDelete_Row->setEnabled(istable);
+    ui->actionInsert_Column->setEnabled(istable);
+    ui->actionInsert_Row->setEnabled(istable);
+    ui->actionDelete_Table->setEnabled(istable);
+
 }
 
 void OutLinerViewer::on_textEdit_focus(){
