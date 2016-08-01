@@ -92,7 +92,7 @@ OutLinerViewer::OutLinerViewer(QWidget *parent)
 OutLinerViewer::~OutLinerViewer() { delete ui; }
 
 void OutLinerViewer::on_actionAddItem_triggered() {
-    noteItem *current = ui->TOC->currentItem();
+    QTreeWidgetItem *current = ui->TOC->currentItem();
     if (current == 0) {
         addChild(current);
     } else {
@@ -101,16 +101,16 @@ void OutLinerViewer::on_actionAddItem_triggered() {
 }
 
 void OutLinerViewer::on_actionRemoveItem_triggered() {
-    noteItem *current = ui->TOC->currentItem();
+    QTreeWidgetItem *current = ui->TOC->currentItem();
 
     if (current == 0)
         return;
     if (current->parent() == 0) {
         ui->TOC->invisibleRootItem()->removeChild(current);
     } else {
-        noteItem* parent = dynamic_cast<noteItem*>(current->parent());
+        QTreeWidgetItem* parent = current->parent();
         parent->removeChild(current);
-        parent->manageIcon();
+        manageIcon(parent);
     }
 
     int i;
@@ -133,21 +133,22 @@ void OutLinerViewer::textAlign(QAction *a)
         ui->textEdit->setAlignment(Qt::AlignJustify);
 }
 
-void OutLinerViewer::addChild(noteItem* current, QString text) {
-    noteItem *n = new noteItem();
+void OutLinerViewer::addChild(QTreeWidgetItem *current, QString text) {
+    QTreeWidgetItem *n = createNewItem();
     n->setText(0,text);
+    n->setData(0,htmlRole,"");
     if (current == 0) {
         ui->TOC->invisibleRootItem()->addChild(n);
     } else {
         current->addChild(n);
-        current->manageIcon();
+        manageIcon(current);
     }
     ui->TOC->setCurrentItem(n);
     ui->TOC->editItem(n);
 }
 
 void OutLinerViewer::on_actionAddChild_triggered() {
-    noteItem *current = ui->TOC->currentItem();
+    QTreeWidgetItem *current = ui->TOC->currentItem();
     addChild(current);
 }
 
@@ -191,6 +192,7 @@ void OutLinerViewer::on_actionIndent_triggered() {
     bf.setIndent(bf.indent()+1);
     cursor.setBlockFormat(bf);
 }
+
 void OutLinerViewer::on_actionUnindent_triggered() {
     QTextCursor cursor = ui->textEdit->textCursor();
     QTextBlockFormat bf = cursor.blockFormat();
@@ -282,12 +284,12 @@ void OutLinerViewer::on_textEdit_anchorClicked(const QUrl &link){
         newNodeDialog newnodedialog(this);
         newnodedialog.setLinkName(link.path());
         if (newnodedialog.exec() == QDialog::Accepted ) {
-            noteItem * c = ui->TOC->currentItem();
+            QTreeWidgetItem * c = ui->TOC->currentItem();
             QString s(link.path());
             switch (newnodedialog.typeOfNode()) {
             case 0: addChild(c,s);break;
             case 1: addChild(c->parent(),s);break;
-            case 2:;addChild((noteItem*)ui->TOC->invisibleRootItem(),s);break;
+            case 2:;addChild(ui->TOC->invisibleRootItem(),s);break;
             }
         }
 
@@ -298,16 +300,16 @@ void OutLinerViewer::on_textEdit_anchorClicked(const QUrl &link){
 }
 
 void OutLinerViewer::on_action_Save_triggered() {
-    noteItem *current = ui->TOC->currentItem();
+    QTreeWidgetItem *current = ui->TOC->currentItem();
     if ( current == nullptr ) return;
-    current->setHtml(ui->textEdit->toHtml());
+    current->setData(0,htmlRole,ui->textEdit->toHtml());
     QByteArray qa,qb;
     QDataStream out(&qa,QIODevice::WriteOnly);
     out << (quint32)MAGIC;
     int nb = ui->TOC->invisibleRootItem()->childCount();
     out << nb;
     for (int i =0; i < nb;i++)
-        out << (noteItem *) (ui->TOC->invisibleRootItem()->child(i));
+        out << (ui->TOC->invisibleRootItem()->child(i));
 
     if (password.size()==0) {
         qb=qa;
@@ -319,7 +321,6 @@ void OutLinerViewer::on_action_Save_triggered() {
     file.write(qb);
     file.close();
 }
-
 void OutLinerViewer::on_actionPass_word_triggered(){
     bool pwdok = false;
     while  (!pwdok) {
@@ -371,12 +372,13 @@ void OutLinerViewer::openFile(){
     int nb;
     in >> nb;
     for (int i = 0; i <nb ;i++) {
-        noteItem *current = new noteItem();
+        QTreeWidgetItem *current = createNewItem();
         in >> current;
         ui->TOC->invisibleRootItem()->addChild(current);
     }
     file.close();
     ui->TOC->setCurrentItem(ui->TOC->invisibleRootItem()->child(0));
+
 }
 
 void OutLinerViewer::on_action_Open_triggered() {
@@ -434,13 +436,13 @@ void OutLinerViewer::on_sizeBox_activated(const QString &p)
 
 void OutLinerViewer::on_TOC_currentItemChanged(QTreeWidgetItem *current,
                                                QTreeWidgetItem *previous) {
-    noteItem *p = dynamic_cast<noteItem*>(previous);
-    noteItem *c = dynamic_cast<noteItem*>(current);
+    QTreeWidgetItem *p = previous;
+    QTreeWidgetItem *c = current;
     if (p != 0) {
-        p->setHtml(ui->textEdit->toHtml());
+        p->setData(0,htmlRole,ui->textEdit->toHtml());
     }
     if (c != 0) {
-        ui->textEdit->setHtml(c->html());
+        ui->textEdit->setHtml(c->data(0,htmlRole).toString());
     } else {
         ui->textEdit->setHtml("");
         ui->textEdit->setEnabled(false);

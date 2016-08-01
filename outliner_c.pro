@@ -16,7 +16,6 @@ SOURCES += main.cpp\
         outlinerviewer.cpp \
         notetreewidget.cpp \
     notetextedit.cpp \
-    noteitem.cpp \
     sizedelegate.cpp \
     colorbox.cpp \
     aes.cpp \
@@ -27,7 +26,6 @@ SOURCES += main.cpp\
 HEADERS  += outlinerviewer.h \
             notetreewidget.h \
     notetextedit.h \
-    noteitem.h \
     sizedelegate.h \
     colorbox.h \
     aes.h \

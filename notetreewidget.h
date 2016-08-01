@@ -2,7 +2,7 @@
 #define NOTETREEWIDGET_H
 
 #include <QTreeWidget>
-#include "noteitem.h"
+//#include "noteitem.h"
 
 namespace Ui {
 class OutLinerViewer;
@@ -21,14 +21,18 @@ class noteTreeWidget : public QTreeWidget
         void dropEvent(QDropEvent *event);
         void contextMenuEvent(QContextMenuEvent *event);
 
-        noteItem * currentItem() const {
-            return dynamic_cast<noteItem*>(QTreeWidget::currentItem());
-        };
-
     signals:
         void focus();
 
 
 };
+
+void manageIcon(QTreeWidgetItem * i);
+QTreeWidgetItem * createNewItem();
+
+QDataStream & operator>>(QDataStream & in, QTreeWidgetItem * n);
+QDataStream & operator<< (QDataStream & out, QTreeWidgetItem * n);
+
+#define htmlRole 20
 
 #endif // NOTETREEWIDGET_H

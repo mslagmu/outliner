@@ -8,7 +8,8 @@
 #include<QLabel>
 #include<QTextCharFormat>
 #include"newnodedialog.h"
-#include "noteitem.h"
+//#include "noteitem.h"
+#include "nodevariant.h"
 
 namespace Ui {
 class OutLinerViewer;
@@ -71,12 +72,12 @@ private:
     void setPassword(QString p);
     QLabel  cryptLabel;
 
-    void addChild(noteItem* current, QString text="");
+    void addChild(QTreeWidgetItem* current, QString text="");
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
 
     void openFile();
-    QList<noteItem*> history;
+    QList<QTreeWidgetItem*> history;
     bool historyManage = false;
     int historyIndex = -1;
 };
